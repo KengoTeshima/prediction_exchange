@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import SdA5
-from chainer import cuda,serializers,Variable
-import csv
-import data
-import ex_num
+from model import SdA5
+from chainer import cuda,serializers
+from preprocessing import data
+from common import ex_num
 
 N_day = 60
 M_day = 30
@@ -26,24 +25,24 @@ in_units = x_train.shape[1]  # 入力層のユニット数
 train = [x_train,x_test]
 
 for a in range(1,24):
-    print("trading %s"%ex_num.ExNumber(a).name)
-    loss_file = "results/%s_loss.csv"%ex_num.ExNumber(a).name
-    output_file = "results/%s_output.csv"%ex_num.ExNumber(a).name
+    print("trading %s" % ex_num.ExNumber(a).name)
+    loss_file = "results/%s_loss.csv" % ex_num.ExNumber(a).name
+    output_file = "results/%s_output.csv" % ex_num.ExNumber(a).name
 
-    teach = exchange[:,ex_num.ExNumber(a)-1].reshape(len(exchange[:,0]),1)
+    teach = exchange[:, ex_num.ExNumber(a) - 1].reshape(len(exchange[:, 0]), 1)
     y_all = data.make_ydata(teach, N_day, M_day)
     y_train, y_test = np.vsplit(y_all, [N])
     test = [y_train,y_test]
 
     rng = np.random.RandomState(1)
     sda_train = SdA5.SDA(rng=rng,
-                        data=train,
-                        target=test,
-                        n_inputs=in_units,
-                        n_hidden=[1024,512,256,128,64],
-                        corruption_levels=[0.1,0.1,0.1,0.1,0.1],
-                        n_outputs=1,
-                        gpu=0)
+                         data=train,
+                         target=test,
+                         n_inputs=in_units,
+                         n_hidden=[1024,512,256,128,64],
+                         corruption_levels=[0.1,0.1,0.1,0.1,0.1],
+                         n_outputs=1,
+                         gpu=0)
 
     #sda_train.pre_train(n_epoch=1000)
     serializers.load_hdf5('SDA5.model',sda_train.model)

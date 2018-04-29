@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import SdA
-from chainer import cuda,serializers,Variable
-import data
-import ex_num
+from model import SdA
+from chainer import cuda,serializers
+from preprocessing import data
+from common import ex_num
 
 N_day = 30
 M_day = 30
@@ -26,7 +26,7 @@ x_train, x_test = np.vsplit(x_all, [N])
 in_units = x_train.shape[1]  # 入力層のユニット数
 train = [x_train,x_test]
 
-teach = exchange[:,ex_num.ExNumber(1)].reshape(len(exchange[:,0]),1)
+teach = exchange[:, ex_num.ExNumber(1)].reshape(len(exchange[:, 0]), 1)
 y_all = data.make_ydata(teach, N_day, M_day)
 y_train, y_test = np.vsplit(y_all, [N])
 test = [y_train,y_test]
