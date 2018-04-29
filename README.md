@@ -3,3 +3,6 @@
 
 # environment
 2016/2時点でchainer_1.5で作成
+
+# caution
+ソース保存用
